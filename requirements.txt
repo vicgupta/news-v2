@@ -1,0 +1,5 @@
+schedule
+requests
+pocketbase
+python-dotenv
+scikit-learn
