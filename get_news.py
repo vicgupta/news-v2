@@ -32,41 +32,32 @@ def get_post_news():
     keywords = get_all_keywords()
     for keyword in keywords:
         print(f"Fetching news for keyword: {keyword}")
-        current_news = fetch_news(keyword)
-        if current_news and "results" in current_news:
-            for item in current_news["results"]:
-                # print ("*"*120)
-                existing_items = pb_news.get_items_with_filter(column_name="url", column_value=item["url"], perPage=1)
-                if existing_items:
-                    # print (f"Item already exists: {item['title']}")
-                    for existing_item in existing_items:
-                        # print (f"Comparing with existing item: {existing_item.title}")
-                        similarity = calculate_cosine_similarity(item["title"], existing_item.title)
-                        if similarity > 0.8:  # If similarity is above 0.8, consider it a duplicate
-                            # print(f"- {item['title']}")
-                            break
-                        else:
-                            if 'publishedDate' in item:
-                                published_date = dt.datetime.fromisoformat(item['publishedDate'].replace("Z", "+00:00"))
-                            else:
-                                published_date = dt.date.today()
-                            data = {
-                                "keyword": keyword,
-                                "title": item["title"],
-                                "content": item["content"],
-                                "url": item["url"],
-                                "date": published_date.strftime('%Y-%m-%d'),
-                            }
-                            count_added += 1
-                            response = pb_news.add_item(data)
-                            if response == "Error":
-                                pass
-                                # print(f"Error adding item: {item['title']}")
-                            else:
-                                # print(f"+ {item['title']}")
-                                pass
-        else:
-            print(f"No news found for keyword: {keyword}")
+        new_news = fetch_news(keyword)
+        for item in new_news["results"]:
+            print ("*"*120)
+            print(f"- {item['title']}")
+            if 'publishedDate' in item:
+                published_date = dt.datetime.fromisoformat(item['publishedDate'].replace("Z", "+00:00"))
+            else:
+                published_date = dt.date.today()
+            data = {
+                "keyword": keyword,
+                "title": item["title"],
+                "content": item["content"],
+                "url": item["url"],
+                "date": published_date.strftime('%Y-%m-%d'),
+            }
+            response = pb_news.add_item(data)
+            
+            if response == "Error":
+                pass
+                # print(f"Error adding item: {item['title']}")
+            else:
+                count_added += 1
+                # print(f"+ {item['title']}")
+                pass
+    else:
+        print(f"No news found for keyword: {keyword}")
     print ("Count: ", count_added)
 
 #schedule.every().day.at("05:00").do(getNews)
