@@ -35,7 +35,7 @@ def get_post_news():
         new_news = fetch_news(keyword)
         for item in new_news["results"]:
             print ("*"*120)
-            print(f"- {item['title']}")
+            
             if 'publishedDate' in item:
                 published_date = dt.datetime.fromisoformat(item['publishedDate'].replace("Z", "+00:00"))
             else:
@@ -48,14 +48,11 @@ def get_post_news():
                 "date": published_date.strftime('%Y-%m-%d'),
             }
             response = pb_news.add_item(data)
-            
             if response == "Error":
-                pass
-                # print(f"Error adding item: {item['title']}")
+                print(f"- {item['title']}")
             else:
                 count_added += 1
-                # print(f"+ {item['title']}")
-                pass
+                print(f"+ {item['title']}")
     else:
         print(f"No news found for keyword: {keyword}")
     print ("Count: ", count_added)
@@ -65,7 +62,6 @@ while True:
     print (f"Running at {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 	#schedule.run_pending()
     get_post_news()
-    
-    print ("Sleeping for 30 mins...")
-    time.sleep(60 * 30)
+    print ("Sleeping for 60 mins...")
+    time.sleep(60 * 60)
     
