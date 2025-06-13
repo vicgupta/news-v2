@@ -57,11 +57,24 @@ def get_post_news():
         print(f"No news found for keyword: {keyword}")
     print ("Count: ", count_added)
 
+def deleteNews(id):
+    print(f"Deleting item {id}")
+    pb_news.delete_id(id)
+
+def detectDuplicate():
+    results = pb_news.get_items_with_filter(column_name="date", column_value=str(dt.date.today()) + " 00:00:00", perPage=999)
+    for i in range (len(results)-1):
+        # print (i, results[i].title)
+        if calculate_cosine_similarity(results[i].title, results[i+1].title) > 0.7:
+            print (results[i].title)
+            deleteNews(results[i].id)
+		
 #schedule.every().day.at("05:00").do(getNews)
 while True:
     print (f"Running at {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 	#schedule.run_pending()
     get_post_news()
+    detectDuplicate()
     print ("Sleeping for 60 mins...")
     time.sleep(60 * 60)
     
