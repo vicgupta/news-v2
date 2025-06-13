@@ -56,6 +56,11 @@ def get_post_news():
     else:
         print(f"No news found for keyword: {keyword}")
     print ("Count: ", count_added)
+def deleteYesterdayNews():
+    yesterday = dt.date.today() - dt.timedelta(days=1)
+    results = pb_news.get_items_with_filter(column_name="date", column_value=str(yesterday) + " 00:00:00", perPage=999)
+    for item in results:
+        pb_news.delete_id(item.id)
 
 def deleteNews(id):
     print(f"Deleting item {id}")
@@ -75,6 +80,7 @@ while True:
 	#schedule.run_pending()
     get_post_news()
     detectDuplicate()
+    deleteYesterdayNews()
     print ("Sleeping for 60 mins...")
     time.sleep(60 * 60)
     
